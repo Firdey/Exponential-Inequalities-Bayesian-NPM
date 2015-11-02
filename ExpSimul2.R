@@ -23,7 +23,7 @@ SimulationBM<-function(k,alpha,tao,n,sigma){
   # alpha, tao and sigma control
   # n the number of data
   
-  x=runif(n,0,1);
+  x<<-runif(n,0,1);
   # Generate the covariates (n of these)
   
   #Ignore
@@ -35,7 +35,7 @@ SimulationBM<-function(k,alpha,tao,n,sigma){
   epsilon=rnorm(n,0,sigma^2);
   #Generate the errors with sigma 
   
-  f_0truth_at_x = f_0truth(x);
+  f_0truth_at_x <<-f_0truth(x);
   y_data<-f_0truth_at_x + epsilon;
   #Create our observed noise data.
   
@@ -130,10 +130,22 @@ SimulationBM<-function(k,alpha,tao,n,sigma){
          #Generates 1000 samples from posterior distribution, with independent multivariate gaussian as proposal with 0.01 as variance across diagnoal.
          #Intialisation is at 0 k dimensioanl with thinning at 5.
 
-Answer=(Metro_Hastings(function(theta) {PosteriorKernel(theta,y_data,x,epsilon,sigma,n,f_0truth_at_x,tao,alpha,k)},c(1.5,2,1.5,1.5,1.5),iterations = 500*10,burn_in = 500))
+Answer=(Metro_Hastings(function(theta) {PosteriorKernel(theta,y_data,x,epsilon,sigma,n,f_0truth_at_x,tao,alpha,k)},c(1.5,2,1.5,1.5,1.5),iterations = 500*10+500,burn_in = 500))
 return(mcmc_thin(Answer, thin = 10))
 }
-for 
+list_samples=list()
+l=1
+M=c(2.6,2.65,2.7,2.75,2.8);
+Count=rep(0,5)
+for (n in c(100,200,300,400,500)){
+  Samples=SimulationBM(5,1.5,1,n,0.1)$trace;
+  #f_theta=rep(0,nrows(Samples))
+  for (h in 1:nrow(Samples)){
+  Count[l]=Count[l]+ifelse((mean(fourier_eval(as.vector(Samples[h,]),x)-f_0truth_at_x)<=M[l]*sqrt((5*log(n)/n))),1,0)
+  }
+  Count=Count/nrow(Samples)
+  l=l+1
+}
 
 
 
