@@ -129,10 +129,10 @@ SimulationBM<-function(k,alpha,tao,n,sigma,Model){
     return(S)
   }
   
-  Answer=(Metro_Hastings(function(theta) {PosteriorKernel(theta,y_data,x,epsilon,sigma,n,f_0truth_at_x,tao,alpha,k)},c(1.7,1,1,0.8,0.6),iterations = 500*60+2000,burn_in = 2000))
-  return(list(mcmc_thin(Answer, thin = 60),x,f_0truth_at_x))
+  Answer=(Metro_Hastings(function(theta) {PosteriorKernel(theta,y_data,x,epsilon,sigma,n,f_0truth_at_x,tao,alpha,k)},c(1.7,1,1,0.8,0.6),iterations = 500*200+4000,burn_in = 4000))
+  return(list(mcmc_thin(Answer, thin = 200),x,f_0truth_at_x))
 }
-
+RatioObject=RatioObject*0.98
 list_samples=list()
 l=1
 M=rep(0,8);
@@ -218,8 +218,7 @@ s=s+1
 for (d in 1:(length(MObject)-1)){
 RatioObject[d]=MObject[d]/MObject[d+1];
 }
-RatioObject=RatioObject=c(0.9,0.9,0.9,0.9,0.9,0.98,0.98,0.98)
-l=1
+
 for (n in c(50,100,150,200,250,300,350,400)){
 print(M[l]*sqrt(5*log(n)/n))
 l=l+1
